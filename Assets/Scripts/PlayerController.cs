@@ -18,17 +18,28 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 movementVector;
     private Quaternion rotationResult;
-
+    private bool jumping = false;
     public Vector3 boxSize;
     public float maxDistance;
     public LayerMask layerMask;
 
     void OnJump()
     {
-        if (GroundCheck())
+        jumping = true;
+    }
+
+
+    void JumpCheck()
+    {
+        if (GroundCheck() && jumping == true)
         {
             Debug.Log("Boing");
             rb.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
+            jumping = false;
+        }
+        else
+        {
+            jumping = false;
         }
     }
 
@@ -111,7 +122,10 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        movementVector = VectorLocalToRelative(movementVector);
         MovePlayerRelativeToCamera();
+        
+        JumpCheck();
     }
 
     void OnTriggerEnter(Collider other)
